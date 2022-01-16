@@ -40,4 +40,4 @@ uncle(X, Y) :- male(X), parents(Y, _, M), sister(M, X).
 aunt(X, Y) :- parents(Y, F, _), brother(F, X).
 aunt(X, Y) :- parents(Y, _, M), sister(M, X).
 
-cousin(X, Y) :- parents(X, F, M), parents(Y, F2, M2).
+cousin(X, Y) :- parents(X, F, M), parents(Y, F2, M2), (brother(F, F2); brother(F, M2); sister(M, F2); sister(M, M2)).
