@@ -1,3 +1,5 @@
+/* FACTS */
+
 north(p, k).
 north(k, f).
 north(f, a).
