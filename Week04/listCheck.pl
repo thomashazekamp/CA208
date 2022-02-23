@@ -12,4 +12,14 @@ myLast(X, [_, Y]) :- myLast(X, Y). /* checking until Y is the last element */
 /* if A (list) is the tail of B (list) */
 myTail(A, [_ | A]).
 
+/* if list C is list B appended to thend of list A, myAppend(A, B, C) */
+myAppend([ ], B, B). /* Appending to an empty list */
+myAppend([H | T], B, [H | C]) :- myAppend(T, B, C).
 
+/* if list A is the reverse of list B, Note: solution from Dr. David Sinclair DCU School of Computing*/
+myReverse([ ], [ ]). /* Checking empty lists */
+myReverse([H | T], B) :- myReverse(T, T1), myAppend(T1, [H], B)
+
+/* if list B is list A with the first occurrence of X removed, myDelete(X, A, B)*/
+myDelete(X, [X | B], B).
+myDelete(X, [Y | T], [Y | L]) :- myDelete(X, T, L).
