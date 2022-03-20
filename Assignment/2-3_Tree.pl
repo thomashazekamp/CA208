@@ -24,3 +24,27 @@ addnode(X, tree(L, Y, R), tree(L, Y, R1)) :- addnode(X, R, R1).
 
 add(X, T1, T2) :- addnode(X, nill, nil), T1 == T2.
 
+present(LeftKey, tree(LeftKey, _, _, _, _)). % base case
+present(RightKey, tree(_, RightKey, _, _, _)). % base case
+
+present(Key, tree(_, _, LeftSubTree, _, _)) :-
+    present(Key, LeftSubTree).
+
+present(Key, tree(_, _, _, MidSubTree, _)) :-
+    present(Key, MidSubTree).
+
+present(Key, tree(_, _, _, _, RightSubTree)) :-
+    present(Key, RightSubTree).
+
+% Inserting
+
+inserting(Key, nil, tree(Key, nil, nil)).
+
+inserting(Key, tree(Root, LeftSubTree, RightSubTree), tree(Root, NewLeftSubTree, RightSubTree)) :-
+    Key < Root,
+    inserting(Key, LeftSubTree, NewLeftSubTree).
+
+inserting(Key, tree(Root, LeftSubTree, RightSubTree), tree(Root, LeftSubTree, NewRightSubTree)) :-
+    Key > Root,
+    inserting(Key, RightSubTree, NewRightSubTree).
+
