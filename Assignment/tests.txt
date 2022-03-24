@@ -1,0 +1,7 @@
+TESTING FOR HEIGHT
+?- height(tree(5, 10, tree(3, 4, tree(2, tree(1, nil, nil), nil), nil, nil), tree(8, 9, tree(7, nil, nil), nil, nil), nil), H).
+H = 4.
+
+?- height(tree(5, 10, tree(3, 4, tree(2, nil, nil), nil, nil), tree(8, 9, tree(7, nil, nil), nil, nil), nil), H).
+H = 3
+
