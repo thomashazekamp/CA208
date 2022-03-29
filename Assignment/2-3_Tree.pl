@@ -1,79 +1,101 @@
 /* This program is for a non-self balancing 2-3 tree */
 
-/* tree(4, tree(3, nil, nil), tree(8, nil, nil)). */
-test(tree(3, nil, nil, nil, nil)).
-
-/* Base case, if the element is the root */
-in(X, tree(X, _, _)).
-
-/* Check if the node or leaf is in the left subtree */
-in(X, tree(Y, L, _)) :- X =< Y, in(X, L).
-
-/* Check if the node or leaf is in the right subtree */
-in(X, tree(_, _, R)) :- in(X, R).
-
-/* Adding a node or leaf to the tree */
-addnode(X, nil, tree(X, nil, nil)).
-
-addnode(X, tree(L, Y, R), tree(L1, Y, R)) :- X =< Y, addnode(X, L, L1).
-
-addnode(X, tree(L, Y, R), tree(L, Y, R1)) :- addnode(X, R, R1).
-
-/* True if adding X to the 2-3 tree T1 generates the 2-3 tree T2 */
-/* add(X, T1, T2). */
-
-add(X, T1, T2) :- addnode(X, nill, nil), T1 == T2.
-
 /* If the tree is a 2 node tree */
 
-present(Key, tree(Key, _, _)).
+present(Node, tree(Node, _, _)).
 
-present(Key, tree(_, LeftSubTree, _)) :-
-    present(Key, LeftSubTree).
+present(Node, tree(_, LeftSubTree, _)) :-
+    present(Node, LeftSubTree).
 
-present(Key, tree(_, _, RightSubTree)) :-
-    present(Key, RightSubTree).
+present(Node, tree(_, _, RightSubTree)) :-
+    present(Node, RightSubTree).
 
 /* If the tree is a 3 node tree */
 
-present(LeftKey, tree(LeftKey, _, _, _, _)). % base case
-present(RightKey, tree(_, RightKey, _, _, _)). % base case
+present(LeftNode, tree(LeftNode, _, _, _, _)). % base case
+present(RightNode, tree(_, RightNode, _, _, _)). % base case
 
-present(Key, tree(_, _, LeftSubTree, _, _)) :-
-    present(Key, LeftSubTree).
+present(Node, tree(_, _, LeftSubTree, _, _)) :-
+    present(Node, LeftSubTree).
 
-present(Key, tree(_, _, _, MidSubTree, _)) :-
-    present(Key, MidSubTree).
+present(Node, tree(_, _, _, MidSubTree, _)) :-
+    present(Node, MidSubTree).
 
-present(Key, tree(_, _, _, _, RightSubTree)) :-
-    present(Key, RightSubTree).
+present(Node, tree(_, _, _, _, RightSubTree)) :-
+    present(Node, RightSubTree).
 
-/* Inserting */
+/* Add(X, T1, T2) is true if adding X to the 2-3 Tree T1 generates the 2-3 Tree T2 */
 
-inserting(Key, nil, tree(Key, nil, nil)).
+inserting(NewNode, tree(ParentNode, LeftChild, RightChild), tree(ParentNode, NewNode, LeftChild, nil, RightChild)) :- % The 2 node will turn into a 3 node if the node looking to be added is larger than the current only parent node
+    NewNode > ParentNode, !.
 
-inserting(Key, tree(Root, LeftSubTree, RightSubTree), tree(Root, NewLeftSubTree, RightSubTree)) :-
-    Key < Root,
-    inserting(Key, LeftSubTree, NewLeftSubTree).
+inserting(NewNode, nil, tree(NewNode, nil, nil)). % Base case for 2 or 3 node tree
 
-inserting(Key, tree(Root, LeftSubTree, RightSubTree), tree(Root, LeftSubTree, NewRightSubTree)) :-
-    Key > Root,
-    inserting(Key, RightSubTree, NewRightSubTree).
+% For a node with 3 elements
 
-/* Height of a tree */
+inserting(NewNode, tree(LeftParent, RightParent, LeftChildTree, MidChildTree, RightChildTree), tree(LeftParent, RightParent, NewLeftChildTree, MidChildTree, RightChildTree)) :- % If the new node needs to be added to the left child side
+    NewNode =< LeftParent,
+    inserting(NewNode, LeftChildTree, NewLeftChildTree).
 
-height(nil, 0).
+inserting(NewNode, tree(LeftParent, RightParent, LeftChildTree, MidChildTree, RightChildTree), tree(LeftParent, RightParent, LeftChildTree, NewMidChildTree, RightChildTree)) :- % If the new node needs to be added to the middle child side
+    NewNode > LeftParent,
+    NewNode =< RightParent,
+    inserting(NewNode, MidChildTree, NewMidChildTree).
 
-height(tree(_, L, R), H) :-
-    height(L, LH), height(R, RH), H is max(LH, RH) + 1.
+inserting(NewNode, tree(LeftParent, RightParent, LeftChildTree, MidChildTree, RightChildTree), tree(LeftParent, RightParent, LeftChildTree, MidChildTree, NewRightChildTree)) :- % If the new node needs to be added to the right child side
+    NewNode > RightParent,
+    inserting(NewNode, RightChildTree, NewRightChildTree).
 
-height(tree(_, _, L, M, R), H) :-
-    height(L, LH), height(M, MH), height(R, RH), OneMax is max(LH, MH), H is max(OneMax, RH) + 1.
+% For a node with 2 elements
 
-/* Printing a tree */
+inserting(NewNode, tree(ParentNode, LeftChildTree, RightChildTree), tree(ParentNode, NewLeftChildTree, RightChildTree)) :- % If the new node needs to be added to the left child side
+    NewNode =< ParentNode,
+    inserting(NewNode, LeftChildTree, NewLeftChildTree).
 
-prettyPrint(nil, _).
-prettyPrint(tree(Key, LST, RST), D) :- D1 is D + 1, prettyPrint(LST, D1), printKey(Key, D), prettyPrint(RST, D1).
+inserting(NewNode, tree(ParentNode, LeftChildTree, RightChildTree), tree(ParentNode, LeftChildTree, NewRightChildTree)) :- % If the new node needs to be added to the right child side
+    NewNode > ParentNode,
+    inserting(NewNode, RightChildTree, NewRightChildTree).
 
-printKey(Key, D) :- D > 0, !, D1 is D - 1, write('\t'), printKey(Key, D1).
-printKey(Key, _) :- write(Key), nl.
+
+/* Height of a tree, height(T, N) is true if the height of T is N */
+
+height(nil, 0). % Base case, If the node is nil, then the current height is 0
+
+height(tree(_, LeftChild, RightChild), HeightNum) :- % Calculating the height of a 2 node tree
+    height(LeftChild, LeftChildHeight), height(RightChild, RightChildHeight),
+    HeightNum is max(LeftChildHeight, RightChildHeight) + 1.
+
+height(tree(_, _, LeftChild, MidChild, RightChild), HeightNum) :- % Calculating the height of a 3 node tree
+    height(LeftChild, LeftChildHeight), height(MidChild, MidChildHeight), height(RightChild, RightChildHeight),
+    OneMax is max(LeftChildHeight, MidChildHeight), HeightNum is max(OneMax, RightChildHeight) + 1.
+
+/* Printing a 2-3 Tree, prettyPrint(T) is always true and displays the 2-3 Tree T */
+
+prettyPrint(tree(Node, LeftChildTree, RightChildTree)) :-
+    printingFullTree(tree(Node, LeftChildTree, RightChildTree), 0). % Start of printing for a 2 node parent
+prettyPrint(tree(LeftNode, RightNode, LeftChildTree, MST, RightChildTree)) :-
+    printingFullTree(tree(LeftNode, RightNode, LeftChildTree, MST, RightChildTree), 0). % Start of printing for a 3 node parent
+
+printingFullTree(nil, _).
+
+printingFullTree(tree(Node, LeftChildTree, RightChildTree), Pos) :-
+    NewPos is Pos + 1,
+    printingFullTree(LeftChildTree, NewPos),
+    printNode(Node, Pos),
+    printingFullTree(RightChildTree, NewPos).
+
+printingFullTree(tree(LeftNode, RightNode, LeftChildTree, MST, RightChildTree), Pos) :-
+    NewPos is Pos + 1,
+    printingFullTree(LeftChildTree, NewPos),
+    printNode(LeftNode, RightNode, Pos),
+    printingFullTree(MST, NewPos),
+    printingFullTree(RightChildTree, NewPos).
+
+printNode(Node, Pos) :-
+    Pos > 0, !, NewPos is Pos - 1, write('\t'), printNode(Node, NewPos).
+
+printNode(Node, _) :- write(Node), nl.
+
+printNode(LeftNode, RightNode, Pos) :- Pos > 0, !, NewPos is Pos - 1, write('\t'), printNode(LeftNode, RightNode, NewPos).
+
+printNode(LeftNode, RightNode, _) :- write(LeftNode), write(','), write(RightNode), nl.
