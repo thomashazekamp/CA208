@@ -1,7 +1,75 @@
+TESTING FOR ADD
+?- add(3, tree(5, nil, nil), T).
+T = tree(5, tree(3, nil, nil), nil)
+
+?- add(8, tree(5, nil, nil), T).
+T = tree(5, 8, nil, nil, nil).
+
+?- add(33, tree(26, 30, tree(15, nil, nil), tree(27, 29, nil, tree(28, nil, nil), nil), tree(31, 44, nil, tree(33, 40, nil, tree(35, 37, nil, nil, nil), nil), nil)), T).
+T = tree(26, 30, tree(15, nil, nil), tree(27, 29, nil, tree(28, nil, nil), nil), tree(31, 44, nil, tree(33, 40, tree(33, nil, nil), tree(35, 37, nil, nil, nil), nil), nil)
+
+?- add(99, tree(19, 35, tree(8, 13, nil, nil, nil), tree(21, nil, nil), tree(46, 50, tree(40, nil, nil), tree(47, 49, nil, tree(48, nil, nil), nil), tree(60, nil, tree(72, nil, nil)))), T).
+T = tree(19, 35, tree(8, 13, nil, nil, nil), tree(21, nil, nil), tree(46, 50, tree(40, nil, nil), tree(47, 49, nil, tree(48, nil, nil), nil), tree(60, 99, nil, nil, tree(72, nil, nil))))
+
+TESTING FOR MEMBER
+?- member(11, tree(5, 10, tree(3, nil, nil), tree(8, 9, tree(3, tree(4, nil, nil), nil), tree(0, nil, nil), tree(1, nil, nil)), tree(12, 20, tree(11, nil, nil), nil, nil))).
+true
+
+?- member(72, tree(19, 35, tree(8, 13, nil, nil, nil), tree(21, nil, nil), tree(46, 50, tree(40, nil, nil), tree(47, 49, nil, tree(48, nil, nil), nil), tree(60, nil, tree(72, nil, nil))))).
+true
+
+?- member(28, tree(26, 30, tree(15, nil, nil), tree(27, 29, nil, tree(28, nil, nil), nil), tree(31, 44, nil, tree(33, 40, nil, tree(35, 37, nil, nil, nil), nil), nil))).
+true
+
 TESTING FOR HEIGHT
 ?- height(tree(5, 10, tree(3, 4, tree(2, tree(1, nil, nil), nil), nil, nil), tree(8, 9, tree(7, nil, nil), nil, nil), nil), H).
 H = 4.
 
-?- height(tree(5, 10, tree(3, 4, tree(2, nil, nil), nil, nil), tree(8, 9, tree(7, nil, nil), nil, nil), nil), H).
-H = 3
+?- height(tree(5, 10, tree(3, nil, nil), tree(8, 9, tree(3, tree(4, nil, nil), nil), tree(0, nil, nil), tree(1, nil, nil)), tree(12, 20, tree(11, nil, nil), nil, nil)), H).
+H = 4
 
+?- height(tree(19, 35, tree(8, 13, nil, nil, nil), tree(21, nil, nil), tree(46, 50, tree(40, nil, nil), tree(47, 49, nil, tree(48, nil, nil), nil), tree(60, nil, tree(72, nil, tree(75, tree(73, nil, nil), nil))))), H).
+H = 6
+
+TESTING FOR PRETTYPRINT
+?- prettyPrint(tree(5, 10, tree(3, nil, nil), tree(8, 9, tree(3, tree(4, nil, nil), nil), tree(0, nil, nil), tree(1, nil, nil)), tree(12, 20, tree(11, nil, nil), nil, nil))).
+        3
+5,10
+                        4
+                3
+        8,9
+                0
+                1
+                11
+        12,20
+true.
+
+?- prettyPrint(tree(3, tree(2, nil, nil), tree(5, tree(4, nil, nil), tree(8, nil, nil)))).
+        2
+3
+                4
+        5
+                8
+true.
+
+?- prettyPrint(tree(19, 35, tree(8, 13, nil, nil, nil), tree(21, nil, nil), tree(46, 50, tree(40, nil, nil), tree(47, 49, nil, tree(48, nil, nil), nil), tree(60, nil, tree(72, nil, nil))))).
+        8,13
+19,35
+        21
+                40
+        46,50
+                47,49
+                        48
+                60
+                        72
+true.
+
+?- prettyPrint(tree(26, 30, tree(15, nil, nil), tree(27, 29, nil, tree(28, nil, nil), nil), tree(31, 44, nil, tree(33, 40, nil, tree(35, 37, nil, nil, nil), nil), nil))).
+        15
+26,30
+        27,29
+                28
+        31,44
+                33,40
+                        35,37
+true.
