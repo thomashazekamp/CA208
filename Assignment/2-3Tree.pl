@@ -61,8 +61,8 @@ member(Node, tree(_, _, RightChildTree)) :- % Using recursion to keep calling th
     member(Node, RightChildTree).
 
 % If the tree is a 3 node tree
-member(LeftNode, tree(LeftNode, _, _, _, _)). % Base case for the left parent
-member(RightNode, tree(_, RightNode, _, _, _)). % Base case for the right parent
+member(LeftParent, tree(LeftParent, _, _, _, _)). % Base case for the left parent
+member(RightParent, tree(_, RightParent, _, _, _)). % Base case for the right parent
 
 member(Node, tree(_, _, LeftChildTree, _, _)) :- % Using recursion to check if the node is in the left side of the parent
     member(Node, LeftChildTree).
@@ -94,8 +94,8 @@ height(tree(_, _, LeftChild, MidChild, RightChild), HeightNum) :- % Calculating 
 prettyPrint(tree(Node, LeftChildTree, RightChildTree)) :-
     printingFullTree(tree(Node, LeftChildTree, RightChildTree), 0). % Start of printing for a 2 node parent, 0 is used to know position
 
-prettyPrint(tree(LeftNode, RightNode, LeftChildTree, MidChildTree, RightChildTree)) :-
-    printingFullTree(tree(LeftNode, RightNode, LeftChildTree, MidChildTree, RightChildTree), 0). % Start of printing for a 3 node parent, 0 is used to know position
+prettyPrint(tree(LeftParent, RightParent, LeftChildTree, MidChildTree, RightChildTree)) :-
+    printingFullTree(tree(LeftParent, RightParent, LeftChildTree, MidChildTree, RightChildTree), 0). % Start of printing for a 3 node parent, 0 is used to know position
 
 printingFullTree(nil, _). % Base case, once it reaches 'nil'
 
@@ -107,10 +107,10 @@ printingFullTree(tree(Node, LeftChildTree, RightChildTree), Pos) :- % Incrementi
     printingFullTree(RightChildTree, NewPos).
 
 % Recursion for a 3 node
-printingFullTree(tree(LeftNode, RightNode, LeftChildTree, MidChildTree, RightChildTree), Pos) :- % Incrementing NewPos and using Pos to know current position, used to print the nodes in correct order
+printingFullTree(tree(LeftParent, RightParent, LeftChildTree, MidChildTree, RightChildTree), Pos) :- % Incrementing NewPos and using Pos to know current position, used to print the nodes in correct order
     NewPos is Pos + 1,
     printingFullTree(LeftChildTree, NewPos),
-    printNode(LeftNode, RightNode, Pos),
+    printNode(LeftParent, RightParent, Pos),
     printingFullTree(MidChildTree, NewPos),
     printingFullTree(RightChildTree, NewPos).
 
@@ -122,10 +122,10 @@ printNode(Node, _) :- % Printing the single node followed by a new line
     write(Node), nl.
 
 % Printing both parent nodes
-printNode(LeftNode, RightNode, Pos) :- 
-    Pos > 0, !, NewPos is Pos - 1, write('        '), printNode(LeftNode, RightNode, NewPos).
+printNode(LeftParent, RightParent, Pos) :- 
+    Pos > 0, !, NewPos is Pos - 1, write('        '), printNode(LeftParent, RightParent, NewPos).
 
-printNode(LeftNode, RightNode, _) :- % Printing the left and right nodes side by side followed by a new line
-    write(LeftNode),
+printNode(LeftParent, RightParent, _) :- % Printing the left and right nodes side by side followed by a new line
+    write(LeftParent),
     write(','),
-    write(RightNode), nl.
+    write(RightParent), nl.
